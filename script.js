@@ -1,23 +1,40 @@
-const buttons = document.querySelectorAll('.ripple')
+const nums = document.querySelectorAll('.nums span')
+const counter = document.querySelector('.counter')
+const finalMessage = document.querySelector('.final')
+const replay = document.querySelector('#replay')
 
-buttons.forEach(button => {
-    button.addEventListener('click', function (e) {
-        const x = e.clientX
-        const y = e.clientY
+runAnimation()
 
-        const buttonTop = e.target.offsetTop
-        const buttonLeft = e.target.offsetLeft
+function resetDOM() {
+  counter.classList.remove('hide')
+  finalMessage.classList.remove('show')
 
-        const xInside = x - buttonLeft
-        const yInside = y - buttonTop
+  nums.forEach((num) => {
+    num.classList.value = ''
+  })
 
-        const circle = document.createElement('span')
-        circle.classList.add('circle')
-        circle.style.top = yInside + 'px'
-        circle.style.left = xInside + 'px'
+  nums[0].classList.add('in')
+}
 
-        this.appendChild(circle)
+function runAnimation() {
+  nums.forEach((num, idx) => {
+    const nextToLast = nums.length - 1
 
-        setTimeout(() => circle.remove(), 500)
+    num.addEventListener('animationend', (e) => {
+      if (e.animationName === 'goIn' && idx !== nextToLast) {
+        num.classList.remove('in')
+        num.classList.add('out')
+      } else if (e.animationName === 'goOut' && num.nextElementSibling) {
+        num.nextElementSibling.classList.add('in')
+      } else {
+        counter.classList.add('hide')
+        finalMessage.classList.add('show')
+      }
     })
+  })
+}
+
+replay.addEventListener('click', () => {
+  resetDOM()
+  runAnimation()
 })
